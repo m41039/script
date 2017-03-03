@@ -8,19 +8,20 @@ now="$(date +'%Y%m%d')"
 case $1 in
 stop) 
 
-sudo /script/_mic/maintain/sigt_deny.sh;sleep 3;tail -f /opt/httpd/logs/access_vip_io_log"$now"
+/script/_mic/maintain/sigt_deny.sh;sleep 3;tail -f /opt/httpd/logs/access_vip_io_log"$now"
 ;;
 
 ######Restart Sql
 restart)
 
-/script/webuse/wlc/vip_startwlc.sh
+/script/webuse/sqlrelay/sqlr46_wspjb.sh stop ; ps -ef | grep sql | awk '{print $2}' | xargs kill -9 ;  /script/webuse/sqlrelay/sqlr46_wspjb.sh restart ;  /opt/httpd/bin/apa
+chectl -k restart ;  /usr/bin/lynx --dump --source "http://`hostname --ip-address`/monitor/check_odbc.php"
 ;;
 
 #######Start A10 and check log
 start)
 
-sudo /script/_mic/maintain/sigt_allow.sh;sleep 3;tail -f /opt/httpd/logs/access_vip_io_log"$now"
+/script/_mic/maintain/sigt_allow.sh;sleep 3;tail -f /opt/httpd/logs/access_vip_io_log"$now"
 ;;
 
 *)
