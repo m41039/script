@@ -12,10 +12,10 @@ else
 fi
 ######Stop A10
 case $1 in
-stop) 
+stop)
 
-sudo /script/_mic/maintain/sigt_deny.sh;sleep 3;tail -f /opt/httpd/logs/access_vip_io_log$now$shit
-
+sudo /script/_mic/maintain/sigt_deny.sh;sleep 3;tail -f /opt/httpd/logs/io_access_log$now$shit
+#echo /opt/httpd/logs/access_vip_io_log$now$shit
 ;;
 
 ######Restart Sql
@@ -27,7 +27,7 @@ restart)
 #######Start A10 and check log
 start)
 
-sudo /script/_mic/maintain/sigt_allow.sh;sleep 3;tail -f /opt/httpd/logs/access_vip_io_log$now$shit
+sudo /script/_mic/maintain/sigt_allow.sh;sleep 3;tail -f /opt/httpd/logs/io_access_log$now$shit
 ;;
 
 *)
