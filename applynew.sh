@@ -16,6 +16,7 @@
 LAB_Gateway=172.19.1.252
 STG_Gateway=172.30.0.1
 LAB_DNS=(10.0.1.5 10.0.1.6)
+STG_DNS=172.29.1.5
 
 LAB_CLASS=$(echo $LAB_Gateway |awk -F. '{print $1"."$2')
 STG_CLASS=$(echo $STG_Gateway |awk -F. '{print $1"."$2')
@@ -33,13 +34,18 @@ addhosts(){
 sed -i "s/HOSTNAME=.*/HOSTNAME=${Hostname}/g" /etc/sysconfig/network
 
 # Add gateway /etc/sysconfig/network file
-IP=$(echo ${Ip} | awk -F. '{print $1"."$2}')
+
+IP(){
+    IP=$(echo ${Ip} | awk -F. '{print $1"."$2}')
+}
+
 if [ "${IP}" == "$LAB_CLASS" ];then
     sed -i "s/GATEWAY=.*/GATEWAY=172.19.1.252/g" /etc/sysconfig/network
 
 elif [ "${Ip}" == "$STG_CLASS" ];then
     sed -i "s/GATEWAY=.*/GATEWAY=172.30.0.1/g" /etc/sysconfig/network
 
+if
 
 # Add DNS /etc/resolv.conf
 echo ddd > resolv.conf
