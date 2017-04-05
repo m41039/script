@@ -4,7 +4,7 @@
 # to run BSAP AP himself
 #
 USER=gary
-PASSWD=gary978
+PASSWD=xxxxxxx
 
 # Adduser gary and set passwd
 adduser $USER
