@@ -1,0 +1,51 @@
+#!/bin/sh
+#This Script will install Puppet Agent on each machine automatically
+#Create on 2017/10/13 by Mickey Wang
+
+#Check OS version
+VERSION=`cat /etc/redhat-release |awk {'print $3'}`
+OS=${VERSION%.*}
+PROXY="proxy=http://sproxy.104.com.tw:3128"
+COUNT_SPROXY=`grep sproxy /etc/yum.conf|wc -l`
+HOSTNAME=`hostname -s`
+NSLOOKUP=`nslookup $HOSTNAME.sys.104dc.com |grep "server can't find"|wc -l`
+
+#INSTALL RPM 
+    if [ $OS = 5 ]; then
+    sudo rpm -ivh /script/_mic/tmp/puppet_agent/puppetlabs-release-pc1-el-5.noarch.rpm
+    else [ $OS = 6 ]; 
+    sudo rpm -ivh /script/_mic/tmp/puppet_agent/puppetlabs-release-pc1-el-6.noarch.rpm
+    fi
+
+#Check proxy setting has already exist on /etc/yum.conf or not
+    if [ $COUNT_SPROXY -eq 0 ]; then 
+    echo 'proxy=http://sproxy.104.com.tw:3128' >> /etc/yum.conf
+    echo "Insert proxy to yum.conf....ing"
+    fi    
+
+#Remove unuse CentOS repo to tmp
+    sudo mv /etc/yum.repos.d/CentOS-* /tmp
+    echo "Move CentOS-* to tmp folder"
+
+#Install Puppet Agent
+    sudo yum install puppet-agent -y
+
+#Verify FQDN, If FQDN exist then Insert Puppet Configuration File
+    if [[ $NSLOOKUP -eq 0 ]];then
+        echo "This FQDN is available"    
+    sudo tee -a /etc/puppetlabs/puppet/puppet.conf <<EOF
+    [main]
+    certname = $HOSTNAME.sys.104dc.com
+    server = puppet.104dc.com
+    environment = production
+    runinterval = 2h
+
+EOF
+    else
+    echo "Stop Install Puppet Agent, Please check the system setting then run again"
+    exit 1
+    fi
+
+#Sync to Puppet Server
+    sudo /opt/puppetlabs/bin/puppet agent -t & sudo /opt/puppetlabs/bin/puppet agent -t
+    echo "All done"
